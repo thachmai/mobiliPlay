@@ -3,6 +3,8 @@
 <meta charset="utf-8"/>
 <style>
 body { margin: 0; padding: 0 }
+.stop-popup { text-align: right; }
+.leaflet-popup-content { text-align: right; }
 </style>
 
 <script src="leaflet.js"></script>
@@ -37,8 +39,14 @@ var tramA = {
         [45.18828, 5.71390]
     ],
     stops: [
+        [45.19131, 5.68742],
+        [45.18914, 5.69423],
+        [45.18911, 5.69854],
+        [45.18886, 5.70652],
+        [45.18828, 5.71390]
     ],
-    color: '#0076BD'
+    color: '#0076BD',
+    name: 'Tram A'
 };
 var tramC = {
     points: [
@@ -53,8 +61,12 @@ var tramC = {
         [45.18034, 5.71558]
     ],
     stops: [
+        [45.17645, 5.69431],
+        [45.17999, 5.70624],
+        [45.18034, 5.71558]
     ],
-    color: '#009B3A'
+    color: '#009B3A',
+    name: 'Tram C'
 };
 var bus = {
     points: [
@@ -66,18 +78,30 @@ var bus = {
         [45.17778, 5.70528]
     ],
     stops: [
+        [45.18896, 5.70556],
+        [45.18444, 5.70551],
+        [45.18120, 5.70528],
+        [45.17778, 5.70528]
     ],
-    color: '#FFEB00'
+    color: '#FFEB00',
+    name: 'Bus C1'
 };
 
+var popupContent = "Prochains voyages pour <b>NAME</b><br/><b>3</b> minutes <br/><b>15</b> minutes <br/><b>24</b> minutes <br/>";
 function drawLine(lineData) {
     var latlngs = lineData.points.map(function (p) { return L.latLng(p[0], p[1]); });
     var polyline = L.polyline(latlngs, {color: lineData.color}).addTo(mymap);
+
+    lineData.stops.forEach(function (s) {
+        L.circle(s, 15, { color: lineData.color, fillColor: lineData.color, fill: true, fillOpacity: 1 })
+            .addTo(mymap)
+            .bindPopup(popupContent.replace('NAME', lineData.name));
+    });
 }
 
 navigator.geolocation.getCurrentPosition(function(position) {
     tileLayer.addTo(mymap);
-    mymap.setView([position.coords.latitude, position.coords.longitude], 15);
+    mymap.setView([position.coords.latitude, position.coords.longitude], 16);
     drawLine(tramC);
     drawLine(tramA);
     drawLine(bus);
